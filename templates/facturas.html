@@ -1,0 +1,299 @@
+{% extends 'layout.html' %}
+
+{% block contenido %}
+    <h1 style="color: darkcyan; font-family: fantasy;">{{titulo}}</h1>  
+        <form action="{{ url_for('editar_factura', codigo=factura_almacenar.codigo) if factura_almacenar else url_for('facturas_html') }}"
+        method="POST"
+        onsubmit="return validarFormulario();"
+        id="formulario_facturas"
+        name="formulario_facturas">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="descripcion">Descripción</label>
+                <input type="text" class="form-control" name="descripcion" {% if factura_almacenar %} value="{{ factura_almacenar.descripcion }}" {% endif %} id="descripcion" placeholder="Describa el producto">
+              <span class="alert alert-danger" role="alert" id="errorDescripcion" style="display: none;">
+                El campo descripción no puede estar vacío.
+              </span>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="codigo">Codigo</label>
+                <input type="text" class="form-control" name="codigo" {% if factura_almacenar %} value="{{ factura_almacenar.codigo }}" {% endif %} id="codigo" placeholder="AAA00000" onblur="validarCodigo ()">
+                <span class="alert alert-danger" role="alert" id="errorCodigo" style="display: none;">Error el campo debe tener 3 letras mayusculas y luego numeros</span>         
+          {% if errorFactura %}
+              <span class="alert alert-danger" role="alert" id="errorFactura"  style="display: block;">{{ errorFactura }}</span>
+          {% endif %}
+          <span class="alert alert-danger" role="alert" id="errorCodigoVacio" style="display: none;">
+            El campo código no puede estar vacío.
+          </span>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="precio_unitario">Precio Unitario</label>
+                <input type="number" class="form-control" name="precio_unitario" {% if factura_almacenar %} value="{{ factura_almacenar.precio_unitario }}" {% endif %} id="precio_unitario">
+              <span class="alert alert-danger" role="alert" id="errorPrecio" style="display: none;">
+                El campo precio no puede estar vacío.
+              </span>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="categoria">Nombre del vendedor</label>
+                <input type="text" class="form-control" name="nombre_vendedor" {% if factura_almacenar %} value="{{ factura_almacenar.nombre_vendedor }}" {% endif %} id="nombre_vendedor" placeholder="Nombre">
+              <span class="alert alert-danger" role="alert" id="errorVendedor" style="display: none;">
+                El nombre del vendedor no puede estar vacío.
+              </span>
+              </div>
+            </div>
+    
+            <div class="form-row">
+              <div class="form-group col-md-4">
+            <label for="metodo_pago">Metodo de pago</label>
+            <select id="metodo_pago" name="metodo_pago" class="form-control">
+              <option selected>Por favor seleccione...</option>
+              <option value="efectivo">Efectivo</option>
+              <option value="tarjeta">Tarjeta</option>
+              <option value="tranferencia">Tranferencia</option>
+            </select>
+            <span class="alert alert-danger" role="alert" id="errorPago" style="display: none;">
+              Debe seleccionar un método de pago.
+            </span>
+          </div>
+              <div class="form-group col-md-4">
+                <label for="categoria">Nombre completo del comprador</label>
+                <input type="text" class="form-control" name="nombre_comprador" {% if factura_almacenar %} value="{{ factura_almacenar.nombre_comprador }}" {% endif %} id="nombre_comprador" placeholder="Nombre">
+              <span class="alert alert-danger" role="alert" id="errorComprador" style="display: none;">
+                El nombre del comprador no puede estar vacío.
+              </span>
+              </div>
+
+              <div class="form-group col-md-4">
+                <label for="categoria">Documento de identificacion</label>
+                <input type="text" class="form-control" name="documento_identidad" {% if factura_almacenar %} value="{{ factura_almacenar.documento_identidad}}" {% endif %} id="documento_identidad" placeholder="Documento">
+          <span class="alert alert-danger" role="alert" id="errorDocumento" style="display: none;">
+            El documento de identidad no puede estar vacío.
+          </span>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="categoria">Telefono</label>
+                <input type="text" class="form-control" name="telefono" {% if factura_almacenar %} value="{{ factura_almacenar.telefono }}" {% endif %} id="telefono" placeholder="Telefono">
+              <span class="alert alert-danger" role="alert" id="errorTelefono" style="display: none;">
+                El teléfono no puede estar vacío.
+              </span>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </form>
+          <script type="text/javascript">
+        function validarCodigo() {
+          console.log("Entro a la funcion");
+          let campoCodigo = document.getElementById("codigo")
+          let valorCodigo = campoCodigo.value;
+          let errorCodigo = document.getElementById("errorCodigo")
+          console.log ("El valor del codigo escrito es: " + valorCodigo );
+          var expresionRegular = new RegExp("[A-Z]{3}[0-9]{1,}")
+          if(expresionRegular.test(valorCodigo)) {
+            console.log ("El campo cumple la validacion")
+            errorCodigo.style.display = 'none';
+          } else {
+            console.log ("El campo No cumple la validacion")
+            errorCodigo.style.display = 'block';
+          }
+        }
+      </script>
+      <script> // Validar campos vacios
+            document.addEventListener('DOMContentLoaded', function () {
+              const formulario = document.getElementById('formulario_facturas');
+
+            formulario.addEventListener('submit', function (evento) {
+              let valido = true;
+
+            // Descripción
+            const descripcion = document.getElementById('descripcion').value.trim();
+            const errorDescripcion = document.getElementById('errorDescripcion');
+            if (descripcion === '') {
+              errorDescripcion.style.display = 'block';
+              valido = false;
+            } else {
+              errorDescripcion.style.display = 'none';
+            }
+
+            // Código
+            const codigo = document.getElementById('codigo').value.trim();
+            const errorCodigo = document.getElementById('errorCodigoVacio');
+            if (codigo === '') {
+              errorCodigo.style.display = 'block';
+              valido = false;
+            } else {
+              errorCodigo.style.display = 'none';
+            }
+
+            // Precio Unitario
+            const precio = document.getElementById('precio_unitario').value.trim();
+            const errorPrecio = document.getElementById('errorPrecio');
+            if (precio === '') {
+              errorPrecio.style.display = 'block';
+              valido = false;
+            } else {
+              errorPrecio.style.display = 'none';
+            }
+
+            // Nombre del Vendedor
+            const vendedor = document.getElementById('nombre_vendedor').value.trim();
+            const errorVendedor = document.getElementById('errorVendedor');
+            if (vendedor === '') {
+              errorVendedor.style.display = 'block';
+              valido = false;
+            } else {
+              errorVendedor.style.display = 'none';
+            }
+
+            // Método de Pago
+            const metodo = document.getElementById('metodo_pago').value;
+            const errorPago = document.getElementById('errorPago');
+            if (metodo === 'Por favor seleccione...') {
+              errorPago.style.display = 'block';
+              valido = false;
+            } else {
+              errorPago.style.display = 'none';
+            }
+
+            // Nombre del Comprador
+            const comprador = document.getElementById('nombre_comprador').value.trim();
+            const errorComprador = document.getElementById('errorComprador');
+            if (comprador === '') {
+              errorComprador.style.display = 'block';
+              valido = false;
+            } else {
+              errorComprador.style.display = 'none';
+            }
+
+            // Documento de Identidad
+            const documento = document.getElementById('documento_identidad').value.trim();
+            const errorDocumento = document.getElementById('errorDocumento');
+            if (documento === '') {
+              errorDocumento.style.display = 'block';
+              valido = false;
+            } else {
+              errorDocumento.style.display = 'none';
+            }
+
+            // Teléfono
+            const telefono = document.getElementById('telefono').value.trim();
+            const errorTelefono = document.getElementById('errorTelefono');
+            if (telefono === '') {
+              errorTelefono.style.display = 'block';
+              valido = false;
+            } else {
+              errorTelefono.style.display = 'none';
+            }
+
+            if (!valido) {
+              evento.preventDefault();
+            }
+          });
+        });
+      </script>
+      <script> // Ocultar el error de codigo si el usuario empieza a escribir algo diferente
+        document.addEventListener("DOMContentLoaded", function () {
+          const inputCodigo = document.getElementById("codigo");
+          const errorFactura = document.querySelectorAll("#errorFactura");
+
+          if (inputCodigo && errorFactura.length > 0) {
+            inputCodigo.addEventListener("input", function () {
+              errorFactura.forEach(function (span) {
+                span.style.display = "none";
+              });
+            });
+          }
+        });
+      </script>
+      <script> //Ocultar mensaje de no dejar campo vacio
+          document.addEventListener("DOMContentLoaded", function () {
+            // Descripción
+            const campoDescripcion = document.getElementById("descripcion");
+            const errorDescripcion = document.getElementById("errorDescripcion");
+            if (campoDescripcion && errorDescripcion) {
+              campoDescripcion.addEventListener("input", function () {
+                if (campoDescripcion.value.trim() !== "") {
+                  errorDescripcion.style.display = "none";
+                }
+              });
+            }
+
+            // Código 
+            const campoCodigo = document.getElementById("codigo");
+            const errorCodigoVacio = document.getElementById("errorCodigoVacio");
+            if (campoCodigo && errorCodigoVacio) {
+              campoCodigo.addEventListener("input", function () {
+                if (campoCodigo.value.trim() !== "") {
+                  errorCodigoVacio.style.display = "none";
+                }
+              });
+            }
+
+            // Precio Unitario
+            const campoPrecio = document.getElementById("precio_unitario");
+            const errorPrecio = document.getElementById("errorPrecio");
+            if (campoPrecio && errorPrecio) {
+              campoPrecio.addEventListener("input", function () {
+                if (campoPrecio.value.trim() !== "") {
+                  errorPrecio.style.display = "none";
+                }
+              });
+            }
+
+            // Nombre del Vendedor
+            const campoVendedor = document.getElementById("nombre_vendedor");
+            const errorVendedor = document.getElementById("errorVendedor");
+            if (campoVendedor && errorVendedor) {
+              campoVendedor.addEventListener("input", function () {
+                if (campoVendedor.value.trim() !== "") {
+                  errorVendedor.style.display = "none";
+                }
+              });
+            }
+
+            // Método de Pago
+            const campoPago = document.getElementById("metodo_pago");
+            const errorPago = document.getElementById("errorPago");
+            if (campoPago && errorPago) {
+              campoPago.addEventListener("change", function () {
+                if (campoPago.value !== "Por favor seleccione...") {
+                  errorPago.style.display = "none";
+                }
+              });
+            }
+
+            // Nombre del Comprador
+            const campoComprador = document.getElementById("nombre_comprador");
+            const errorComprador = document.getElementById("errorComprador");
+            if (campoComprador && errorComprador) {
+              campoComprador.addEventListener("input", function () {
+                if (campoComprador.value.trim() !== "") {
+                  errorComprador.style.display = "none";
+                }
+              });
+            }
+
+            // Documento de Identidad
+            const campoDocumento = document.getElementById("documento_identidad");
+            const errorDocumento = document.getElementById("errorDocumento");
+            if (campoDocumento && errorDocumento) {
+              campoDocumento.addEventListener("input", function () {
+                if (campoDocumento.value.trim() !== "") {
+                  errorDocumento.style.display = "none";
+                }
+              });
+            }
+
+            // Teléfono
+            const campoTelefono = document.getElementById("telefono");
+            const errorTelefono = document.getElementById("errorTelefono");
+            if (campoTelefono && errorTelefono) {
+              campoTelefono.addEventListener("input", function () {
+                if (campoTelefono.value.trim() !== "") {
+                  errorTelefono.style.display = "none";
+                }
+              });
+            }
+          });
+        </script>
+{% endblock contenido %}
+      

@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% block contenido %}
+    <h1 style="color: darkcyan; font-family: fantasy;">{{titulo}}</h1>   
+    <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Codigo</th>
+            <th scope="col">Descripción</th>
+            <th scope="col">Unidad de medida</th>
+            <th scope="col">Cantidad inventario</th>
+            <th scope="col">Precio</th>
+            <th scope="col">Categoria</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for producto in productos %}
+          <tr>
+            <th scope="row">{{producto.codigo}}</th>
+            <td>{{producto.descripcion}}</td>
+            <td>{{producto.unidad_medida}}</td>
+            <td>{{producto.cantidad_inventario}}</td>
+            <td>{{producto.precio_unitario }}</td>
+            <td>{{producto.categoria}}</td>
+            <td>
+              <a href="{{ url_for('editar_producto', codigo=producto.codigo) }}" class="btn btn-success">Editar</a>
+              <a href="{{ url_for('borrar_producto', codigo=producto.codigo) }}" class="btn btn-danger" 
+              onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');">Borrar</a>
+            </td>
+          </tr>
+          {% endfor %}         
+          
+        </tbody>
+      </table>
+{% endblock contenido %}

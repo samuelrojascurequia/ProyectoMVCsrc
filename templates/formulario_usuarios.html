@@ -1,0 +1,306 @@
+{% extends 'layout.html' %}
+
+{% block contenido %}
+  <h1 style="color: darkcyan; font-family: fantasy;"> {{titulo}}</h1>
+  <form method="post"
+      action="{{ url_for('editar_usuario', id=usuario_almacenar.id) if usuario_almacenar and usuario_almacenar.id else '' }}"
+      id="formulario_usuarios"
+      name="formulario_usuarios"
+      onsubmit="return validarFormulario();">
+        <div class="form-row">
+          <div class="col-md-4 mb-3">
+            <label for="nombres">Nombres</label>
+            <input type="text" class="form-control" name="nombres" {% if usuario_almacenar %} value="{{ usuario_almacenar.nombres }}" {% endif %} id="nombres" placeholder="Nombres">
+            <div class="valid-tooltip">
+              Por favor ingresar un nombre
+            </div>
+            <span class="alert alert-danger" role="alert" id="errorNombres" style="display: none;">El campo nombres no puede estar vacío.</span>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="apellidos">Apellidos</label>
+            <input type="text" class="form-control" name="apellidos" {% if usuario_almacenar %} value="{{ usuario_almacenar.apellidos }}" {% endif %} id="apellidos" placeholder="Apellidos" >
+            <div class="valid-tooltip">
+              por favor ingresar algun caracter
+            </div>
+            <span class="alert alert-danger" role="alert" id="errorApellidos" style="display: none;">El campo apellidos no puede estar vacío.</span>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="email">Email</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">@</span>
+              </div>
+              <input type="text" class="form-control" name="email" {% if usuario_almacenar %} value="{{ usuario_almacenar.email }}" {% endif %} id="email" placeholder="Email" aria-describedby="validationTooltipUsernamePrepend" required onblur="validarEmail()">
+              <span class="alert alert-danger" role="alert" id="errorEmail" style="display: none;">Error el campo debe tener nombre de usuario, @ y dominio</span>
+              <div class="invalid-tooltip">
+                Por favor poner un usuario valido.
+              </div>
+            </div>
+          </div>
+        </div>
+         <div class="form-row">
+          <div class="col-md-3 mb-3">
+            <label for="direccion">Direccion</label>
+            <input type="text" class="form-control" name="direccion" {% if usuario_almacenar %} value="{{ usuario_almacenar.direccion }}" {% endif %} id="direccion" placeholder="Direccion">
+            <div class="invalid-tooltip">
+              Indique su direccion.
+            </div>
+            <span class="alert alert-danger" role="alert" id="errorDireccion" style="display: none;">El campo direccion no puede estar vacío.</span>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="telefono">Telefono</label>
+            <input type="text" class="form-control" name="telefono" {% if usuario_almacenar %} value="{{ usuario_almacenar.telefono }}" {% endif %} id="telefono" placeholder="Telefono">
+            <div class="invalid-tooltip">
+              Indique su numero Telefono.
+            </div>
+            <span class="alert alert-danger" role="alert" id="errorTelefono" style="display: none;">El campo teléfono no puede estar vacío.</span>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="documento_identidad">Documento de identidad</label>
+            <input type="text" class="form-control" name="documento_identidad" {% if usuario_almacenar %} value="{{ usuario_almacenar.documento_identidad }}" {% endif %} id="documento_identidad" placeholder="Documento de identidad">
+          {% if errorUsuario %}
+              <span class="alert alert-danger" role="alert" id="errorUsuario"  style="display: block;">{{ errorUsuario }}</span>
+          {% endif %}
+            <div class="invalid-tooltip">
+              Indique su numero de identidad.
+            </div>
+            <span class="alert alert-danger" role="alert" id="errorDocumento" style="display: none;">El campo documento no puede estar vacío.</span>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="puesto">Puesto</label>
+            <select id="puesto" name="puesto" class="form-control">
+              <option selected>Por favor seleccione...</option>
+              <option value="gerente">Gerente</option>
+              <option value="empleado">Empleado</option>
+            </select>
+            <span class="alert alert-danger" role="alert" id="errorPuesto" style="display: none;">El campo puesto no puede estar vacío.</span>
+          </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="contraseña">Contraseña</label>
+            <input type="text" class="form-control" name="contraseña" {% if usuario_almacenar %} value="{{ usuario_almacenar.contraseña}}" {% endif %} id="contraseña" placeholder="Establezca una Contraseña">
+            <div class="invalid-tooltip">
+              Establezca su contraseña.
+            </div>
+            <span class="alert alert-danger" role="alert" id="errorContraseña" style="display: none;">El campo contraseña no puede estar vacío.</span>
+          </div>
+            <br>
+          <div class="container d-flex justify-content-left">
+              <button class="btn btn-primary" type="submit">Enviar</button>
+          </div>
+        </div>
+      </form>
+      <script> //Validar campos vacios y email
+        function validarFormulario() {
+          let camposValidos = true;
+
+          // Validar nombres
+          let nombres = document.getElementsByName("nombres")[0];
+          let errorNombres = document.getElementById("errorNombres");
+          if (nombres.value.trim() === "") {
+            errorNombres.style.display = 'block';
+            camposValidos = false;
+          } else {
+            errorNombres.style.display = 'none';
+          }
+
+          // Validar apellidos
+          let apellidos = document.getElementsByName("apellidos")[0];
+          let errorApellidos = document.getElementById("errorApellidos");
+          if (apellidos.value.trim() === "") {
+            errorApellidos.style.display = 'block';
+            camposValidos = false;
+          } else {
+            errorApellidos.style.display = 'none';
+          }
+
+          // Validar dirección
+          let direccion = document.getElementsByName("direccion")[0];
+          let errorDireccion = document.getElementById("errorDireccion");
+          if (direccion.value.trim() === "") {
+            errorDireccion.style.display = 'block';
+            camposValidos = false;
+          } else {
+            errorDireccion.style.display = 'none';
+          }
+
+          // Validar teléfono
+          let telefono = document.getElementsByName("telefono")[0];
+          let errorTelefono = document.getElementById("errorTelefono");
+          if (telefono.value.trim() === "") {
+            errorTelefono.style.display = 'block';
+            camposValidos = false;
+          } else {
+            errorTelefono.style.display = 'none';
+          }
+
+          // Validar documento de identidad
+          let documento = document.getElementsByName("documento_identidad")[0];
+          let errorDocumento = document.getElementById("errorDocumento");
+          if (documento.value.trim() === "") {
+            errorDocumento.style.display = 'block';
+            camposValidos = false;
+          } else {
+            errorDocumento.style.display = 'none';
+          }
+
+          // Validar puesto
+          let puesto = document.getElementsByName("puesto")[0];
+          let errorPuesto = document.getElementById("errorPuesto");
+          if (puesto.value === "Por favor seleccione...") {
+            errorPuesto.style.display = 'block';
+            camposValidos = false;
+          } else {
+            errorPuesto.style.display = 'none';
+          }
+
+          // Validar contraseña
+          let contraseña = document.getElementsByName("contraseña")[0];
+          let errorContraseña = document.getElementById("errorContraseña");
+          if (contraseña.value.trim() === "") {
+            errorContraseña.style.display = 'block';
+            camposValidos = false;
+          } else {
+            errorContraseña.style.display = 'none';
+          }
+
+          // Validar email 
+          if (!validarEmail()) {
+            camposValidos = false;
+          }
+
+          return camposValidos;
+        }
+
+        function validarEmail() {
+          let campoEmail = document.getElementById("email");
+          let valorEmail = campoEmail.value.trim();
+          let errorEmail = document.getElementById("errorEmail");
+          let expresionEmail = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/;
+
+          if (expresionEmail.test(valorEmail)) {
+            errorEmail.style.display = 'none';
+            return true;
+          } else {
+            errorEmail.style.display = 'block';
+            return false;
+          }
+        }
+      </script>
+      <script> // Ocultar el error de documento si el usuario empieza a escribir algo diferente
+        document.addEventListener("DOMContentLoaded", function () {
+          const inputDocumento = document.getElementById("documento_identidad");
+          const errorUsuario = document.getElementById("errorUsuario");
+
+          if (inputDocumento && errorUsuario) {
+            inputDocumento.addEventListener("input", function () {
+              if (errorUsuario.style.display === "block") {
+                errorUsuario.style.display = "none";
+              }
+            });
+          }
+        });
+      </script>
+      <script> //Ocultar mensaje de no dejar campo vacio
+          document.addEventListener("DOMContentLoaded", function () {
+            // Nombres
+            const campoNombres = document.getElementsByName("nombres")[0];
+            const errorNombres = document.getElementById("errorNombres");
+            if (campoNombres && errorNombres) {
+              campoNombres.addEventListener("input", function () {
+                if (campoNombres.value.trim() !== "") {
+                  errorNombres.style.display = "none";
+                }
+              });
+            }
+
+            // Apellidos
+            const campoApellidos = document.getElementsByName("apellidos")[0];
+            const errorApellidos = document.getElementById("errorApellidos");
+            if (campoApellidos && errorApellidos) {
+              campoApellidos.addEventListener("input", function () {
+                if (campoApellidos.value.trim() !== "") {
+                  errorApellidos.style.display = "none";
+                }
+              });
+            }
+
+            // Dirección
+            const campoDireccion = document.getElementsByName("direccion")[0];
+            const errorDireccion = document.getElementById("errorDireccion");
+            if (campoDireccion && errorDireccion) {
+              campoDireccion.addEventListener("input", function () {
+                if (campoDireccion.value.trim() !== "") {
+                  errorDireccion.style.display = "none";
+                }
+              });
+            }
+
+            // Teléfono
+            const campoTelefono = document.getElementsByName("telefono")[0];
+            const errorTelefono = document.getElementById("errorTelefono");
+            if (campoTelefono && errorTelefono) {
+              campoTelefono.addEventListener("input", function () {
+                if (campoTelefono.value.trim() !== "") {
+                  errorTelefono.style.display = "none";
+                }
+              });
+            }
+
+            // Documento de identidad
+            const campoDocumento = document.getElementsByName("documento_identidad")[0];
+            const errorDocumento = document.getElementById("errorDocumento");
+            if (campoDocumento && errorDocumento) {
+              campoDocumento.addEventListener("input", function () {
+                if (campoDocumento.value.trim() !== "") {
+                  errorDocumento.style.display = "none";
+                }
+              });
+            }
+
+            // Email
+            const campoEmail = document.getElementById("email");
+            const errorEmail = document.getElementById("errorEmail");
+            if (campoEmail && errorEmail) {
+              campoEmail.addEventListener("input", function () {
+                const expresionEmail = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/;
+                if (expresionEmail.test(campoEmail.value.trim())) {
+                  errorEmail.style.display = "none";
+                }
+              });
+            }
+
+            // Contraseña
+            const campoContraseña = document.getElementsByName("contraseña")[0];
+            const errorContraseña = document.getElementById("errorContraseña");
+            if (campoContraseña && errorContraseña) {
+              campoContraseña.addEventListener("input", function () {
+                if (campoContraseña.value.trim() !== "") {
+                  errorContraseña.style.display = "none";
+                }
+              });
+            }
+
+            // Puesto 
+            const campoPuesto = document.getElementsByName("puesto")[0];
+            const errorPuesto = document.getElementById("errorPuesto");
+            if (campoPuesto && errorPuesto) {
+              campoPuesto.addEventListener("change", function () {
+                if (campoPuesto.value !== "Por favor seleccione...") {
+                  errorPuesto.style.display = "none";
+                }
+              });
+            }
+
+            // Documento existente 
+            const errorUsuario = document.getElementById("errorUsuario");
+            if (campoDocumento && errorUsuario) {
+              campoDocumento.addEventListener("input", function () {
+                if (errorUsuario.style.display === "block") {
+                  errorUsuario.style.display = "none";
+                }
+              });
+            }
+          });
+      </script>
+{% endblock contenido %}

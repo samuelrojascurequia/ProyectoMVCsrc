@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block contenido %}
+      <h1 style="color: darkcyan; font-family: fantasy;">{{titulo}}</h1>
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Nombres</th>
+            <th scope="col">Apellidos</th>
+            <th scope="col">Email</th>
+            <th scope="col">Ciudad</th> 
+            <th scope="col">Departamento</th>
+            <th scope="col">Direccion</th>
+            <th scope="col">Documento</th>
+            <th scope="col">Telefono</th>
+        </tr>
+        </thead>
+        <tbody>
+          {% for cliente in clientes %}
+          <tr>
+            <th scope="row">{{cliente.nombres}}</th>
+            <td>{{cliente.apellidos}}</td>
+            <td>{{cliente.email}}</td>
+            <td>{{cliente.ciudad}}</td>
+            <td>{{cliente.departamento}}</td>
+            <td>{{cliente.direccion}}</td>
+            <td>{{cliente.documento_identidad}}</td>
+            <td>{{cliente.telefono}}</td>
+            <td>
+                <a href="{{ url_for('editar_cliente', id=cliente.id) }}" class="btn btn-success">Editar</a>
+                <a href="{{ url_for('eliminar_cliente', id=cliente.id) }}" class="btn btn-danger" 
+                onclick="return confirm('¿Estás seguro de que deseas eliminar este cliente?');">Borrar</a>
+            </td>
+          </tr>
+          {% endfor %} 
+
+        </tbody>
+      </table>
+{% endblock contenido %} 

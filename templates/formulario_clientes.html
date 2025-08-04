@@ -1,0 +1,267 @@
+{% extends 'layout.html' %}
+
+{% block contenido %}
+    <h1 style="color: darkcyan; font-family: fantasy;">{{titulo}}</h1>
+    <form method="post" action="{{ url_for('editar_cliente', id=cliente_almacenar.id) if cliente_almacenar and cliente_almacenar.id else '' }}" 
+    id="formulario_clientes" 
+    name="formulario_clientes" 
+    onsubmit="return validarFormulario();">
+        <div class="form-row" >
+          <div class="col-md-4 mb-3">
+            <label for="nombres">Nombres</label>
+            <input type="text" class="form-control" name="nombres" {% if cliente_almacenar %} value="{{ cliente_almacenar.nombres }}" {% endif %} id="validationTooltip01" placeholder="Nombres">
+            <div class="valid-tooltip">
+              Por favor ingresar un nombre
+            </div>
+            <span class="alert alert-danger" role="alert" id="errorNombres" style="display: none;">El campo nombres no puede estar vacío.</span>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="apellidos">Apellidos</label>
+            <input type="text" class="form-control" name="apellidos" {% if cliente_almacenar %} value="{{ cliente_almacenar.apellidos }}" {% endif %}id="validationTooltip02" placeholder="Apellidos">
+            <div class="valid-tooltip">
+              por favor ingresar algun caracter
+            </div>
+            <span class="alert alert-danger" role="alert" id="errorApellidos" style="display: none;">El campo apellidos no puede estar vacío.</span>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="email">Email</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="validationTooltipUsernamePrepend">@</span>
+              </div>
+              <input type="text" class="form-control" name="email" {% if cliente_almacenar %} value="{{ cliente_almacenar.email }}" {% endif %} id="email" placeholder="Email" aria-describedby="validationTooltipUsernamePrepend" required  onblur="validarEmail()">
+              <span class="alert alert-danger" role="alert" id="errorEmail" style="display: none;">Error el campo debe tener nombre de usuario, @ y dominio</span> 
+              <div class="invalid-tooltip">
+                Por favor poner un usuario valido.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-md-6 mb-3">
+            <label for="ciudad">Ciudad</label>
+            <input type="text" class="form-control" name="ciudad" {% if cliente_almacenar %} value="{{ cliente_almacenar.ciudad }}" {% endif %} id="validationTooltip03" placeholder="Ciudad">
+            <div class="invalid-tooltip">
+              Indique una ciudad valida.
+            </div>
+            <span class="alert alert-danger" role="alert" id="errorCiudad" style="display: none;">El campo ciudad no puede estar vacío.</span>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="departamento">Departamento</label>
+            <input type="text" class="form-control" name="departamento" {% if cliente_almacenar %} value="{{ cliente_almacenar.departamento }}" {% endif %} id="validationTooltip04" placeholder="Departamento">
+            <div class="invalid-tooltip">
+              Indique un departamento valido.
+            </div>
+            <span class="alert alert-danger" role="alert" id="errorDepartamento" style="display: none;">El campo departamento no puede estar vacío.</span>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="direccion">Direccion</label>
+            <input type="text" class="form-control" name="direccion" {% if cliente_almacenar %} value="{{ cliente_almacenar.direccion }}" {% endif %} id="validationTooltip05" placeholder="Direccion">
+            <div class="invalid-tooltip">
+              Indique una direccion valida.
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="documento_identidad">Documento de identidad</label>
+            <input type="text" class="form-control"  name="documento_identidad" {% if cliente_almacenar %} value="{{ cliente_almacenar.documento_identidad }}" {% endif %} id="validationTooltip06" placeholder="Documento de identidad">
+          {% if errorCliente %}
+              <span class="alert alert-danger" role="alert" id="errorCliente"  style="display: block;">{{ errorCliente }}</span>
+          {% endif %}
+            <div class="invalid-tooltip">
+              Indique un documento valido.
+            </div>
+            <span class="alert alert-danger" role="alert" id="errorDocumento" style="display: none;">El campo documento de identidad no puede estar vacío.</span>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="telefono">Telefono</label>
+            <input type="text" class="form-control" name="telefono" {% if cliente_almacenar %} value="{{ cliente_almacenar.telefono }}" {% endif %} id="validationTooltip08" placeholder="Telefono">
+            <div class="invalid-tooltip">
+              Indique un Telefono valido.
+            </div>
+            <span class="alert alert-danger" role="alert" id="errorTelefono" style="display: none;">El campo teléfono no puede estar vacío.</span>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Enviar</button>
+      </form>
+      <script> // Validar campos vacios y formato de email
+        function validarFormulario() {
+          let camposValidos = true;
+
+          // Validar nombres
+          let nombres = document.getElementsByName("nombres")[0];
+          let errorNombres = document.getElementById("errorNombres");
+          if (nombres.value.trim() === "") {
+            errorNombres.style.display = 'block';
+            camposValidos = false;
+          } else {
+            errorNombres.style.display = 'none';
+          }
+
+          // Validar apellidos
+          let apellidos = document.getElementsByName("apellidos")[0];
+          let errorApellidos = document.getElementById("errorApellidos");
+          if (apellidos.value.trim() === "") {
+            errorApellidos.style.display = 'block';
+            camposValidos = false;
+          } else {
+            errorApellidos.style.display = 'none';
+          }
+
+          // Validar ciudad
+          let ciudad = document.getElementsByName("ciudad")[0];
+          let errorCiudad = document.getElementById("errorCiudad");
+          if (ciudad.value.trim() === "") {
+            errorCiudad.style.display = 'block';
+            camposValidos = false;
+          } else {
+            errorCiudad.style.display = 'none';
+          }
+
+          // Validar departamento
+          let departamento = document.getElementsByName("departamento")[0];
+          let errorDepartamento = document.getElementById("errorDepartamento");
+          if (departamento.value.trim() === "") {
+            errorDepartamento.style.display = 'block';
+            camposValidos = false;
+          } else {
+            errorDepartamento.style.display = 'none';
+          }
+
+          // Validar documento
+          let documento = document.getElementsByName("documento_identidad")[0];
+          let errorDocumento = document.getElementById("errorDocumento");
+          if (documento.value.trim() === "") {
+            errorDocumento.style.display = 'block';
+            camposValidos = false;
+          } else {
+            errorDocumento.style.display = 'none';
+          }
+
+          // Validar teléfono
+          let telefono = document.getElementsByName("telefono")[0];
+          let errorTelefono = document.getElementById("errorTelefono");
+          if (telefono.value.trim() === "") {
+            errorTelefono.style.display = 'block';
+            camposValidos = false;
+          } else {
+            errorTelefono.style.display = 'none';
+          }
+
+          if (!validarEmail()) {
+            camposValidos = false;
+          }
+
+          return camposValidos;
+        }
+
+        function validarEmail() {
+          let campoEmail = document.getElementById("email");
+          let valorEmail = campoEmail.value.trim();
+          let errorEmail = document.getElementById("errorEmail");
+          let expresionEmail = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/;
+
+          if (expresionEmail.test(valorEmail)) {
+            errorEmail.style.display = 'none';
+            return true;
+          } else {
+            errorEmail.style.display = 'block';
+            return false;
+          }
+        }
+      </script>
+      <script> // Ocultar el error de documento si el usuario empieza a escribir algo diferente
+          document.addEventListener("DOMContentLoaded", function () {
+            const inputDocumento = document.getElementsByName("documento_identidad")[0];
+            const errorCliente = document.getElementById("errorCliente");
+
+            if (inputDocumento && errorCliente) {
+              inputDocumento.addEventListener("input", function () {
+                if (errorCliente.style.display === "block") {
+                  errorCliente.style.display = "none";
+                }
+              });
+            }
+          });
+      </script>
+      <script> //Ocultar mensaje de no dejar campo vacio
+          document.addEventListener("DOMContentLoaded", function () {
+            // Nombres
+            const campoNombres = document.getElementsByName("nombres")[0];
+            const errorNombres = document.getElementById("errorNombres");
+            if (campoNombres && errorNombres) {
+              campoNombres.addEventListener("input", function () {
+                if (campoNombres.value.trim() !== "") {
+                  errorNombres.style.display = "none";
+                }
+              });
+            }
+
+            // Apellidos
+            const campoApellidos = document.getElementsByName("apellidos")[0];
+            const errorApellidos = document.getElementById("errorApellidos");
+            if (campoApellidos && errorApellidos) {
+              campoApellidos.addEventListener("input", function () {
+                if (campoApellidos.value.trim() !== "") {
+                  errorApellidos.style.display = "none";
+                }
+              });
+            }
+
+            // Ciudad
+            const campoCiudad = document.getElementsByName("ciudad")[0];
+            const errorCiudad = document.getElementById("errorCiudad");
+            if (campoCiudad && errorCiudad) {
+              campoCiudad.addEventListener("input", function () {
+                if (campoCiudad.value.trim() !== "") {
+                  errorCiudad.style.display = "none";
+                }
+              });
+            }
+
+            // Departamento
+            const campoDepartamento = document.getElementsByName("departamento")[0];
+            const errorDepartamento = document.getElementById("errorDepartamento");
+            if (campoDepartamento && errorDepartamento) {
+              campoDepartamento.addEventListener("input", function () {
+                if (campoDepartamento.value.trim() !== "") {
+                  errorDepartamento.style.display = "none";
+                }
+              });
+            }
+
+            // Documento de identidad
+            const campoDocumento = document.getElementsByName("documento_identidad")[0];
+            const errorDocumento = document.getElementById("errorDocumento");
+            if (campoDocumento && errorDocumento) {
+              campoDocumento.addEventListener("input", function () {
+                if (campoDocumento.value.trim() !== "") {
+                  errorDocumento.style.display = "none";
+                }
+              });
+            }
+
+            // Teléfono
+            const campoTelefono = document.getElementsByName("telefono")[0];
+            const errorTelefono = document.getElementById("errorTelefono");
+            if (campoTelefono && errorTelefono) {
+              campoTelefono.addEventListener("input", function () {
+                if (campoTelefono.value.trim() !== "") {
+                  errorTelefono.style.display = "none";
+                }
+              });
+            }
+
+            // Email
+            const campoEmail = document.getElementById("email");
+            const errorEmail = document.getElementById("errorEmail");
+            if (campoEmail && errorEmail) {
+              campoEmail.addEventListener("input", function () {
+                const expresionEmail = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/;
+                if (expresionEmail.test(campoEmail.value.trim())) {
+                  errorEmail.style.display = "none";
+                }
+              });
+            }
+          });
+        </script>
+{% endblock contenido %}

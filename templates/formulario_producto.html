@@ -1,0 +1,251 @@
+{% extends 'layout.html' %}
+
+{% block contenido %}
+    <h1 style="color: darkcyan; font-family: fantasy;">{{titulo}}</h1>   
+    <form action="{{ url_for('editar_producto', codigo=producto_almacenar.codigo) if producto_almacenar else url_for('formulario_producto_html') }}"
+      method="post"
+      onsubmit="return validarFormulario();"
+      id="formulario_producto" 
+      name="formulario_producto">
+      <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="descripcion">Descripción</label>
+            <input type="text" class="form-control" id="descripcion" name="descripcion" {% if producto_almacenar %} value="{{ producto_almacenar.descripcion }}" {% endif %} placeholder="Describa el producto">
+        {% if errorProducto %}
+          <span class="alert alert-danger" role="alert" id="errorDescripcion"  style="display: block;">{{ errorProducto }}</span>
+        {% endif %}
+       <span class="alert alert-danger" role="alert" id="errorDescripcionJS" style="display: none;">El campo descripción no puede estar vacío.</span>
+  
+          </div>
+          <div class="form-group col-md-6">
+            <label for="codigo">Codigo</label>
+            <input type="text" class="form-control" id="codigo" {% if producto_almacenar %} value="{{ producto_almacenar.codigo }}" {% endif %} name="codigo" placeholder="AAA00000" onblur="validarCodigo ()">
+            <span class="alert alert-danger" role="alert" id="errorCodigo" style="display: none;">Error el campo debe tener 3 letras mayusculas y luego numeros</span>
+        {% if errorCodigo %}
+          <span class="alert alert-danger" role="alert" id="errorCodigo"  style="display: block;">{{ errorCodigo }}</span>
+        {% endif %}
+        <span class="alert alert-danger" role="alert" id="errorCodigoVacio" style="display: none;">El campo código no puede estar vacío.</span>
+          </div>
+          <div class="form-group col-md-6"> 
+            <label for="cantidad_inventario">Cantidad Inventario</label>
+            <input type="number" class="form-control" id="cantidad_inventario"  name="cantidad_inventario" {% if producto_almacenar %} value="{{ producto_almacenar.cantidad_inventario }}" {% endif %} placeholder="Indique una cantidad">
+          <span class="alert alert-danger" role="alert" id="errorCantidad" style="display: none;">El campo cantidad no puede estar vacío.</span>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="precio_unitario">Precio Unitario</label>
+            <input type="number" class="form-control" id="precio_unitario" name="precio_unitario" placeholder="Indique un valor" {% if producto_almacenar %} value="{{ producto_almacenar.precio_unitario }}" {% endif %}>
+          <span class="alert alert-danger" role="alert" id="errorPrecio" style="display: none;">El campo precio no puede estar vacío.</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="unidad_medida">Unidad de Medida</label>
+            <select id="unidad_medida" name="unidad_medida" class="form-control">
+              <option selected>Por favor seleccione...</option>
+              <option value="GRS">GRS</option>
+              <option value="UND">UND</option>
+            </select>
+           <span class="alert alert-danger" role="alert" id="errorUnidad" style="display: none;">Debe seleccionar una unidad de medida.</span>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="categoria">Categoria</label>
+            <select id="categoria" name="categoria" class="form-control">
+              <option selected>Por favor seleccione...</option>
+              {% for categoria in categorias %}
+              <option value="{{categoria.id}}">{{categoria.nombre_categoria}}</option>
+              {% endfor %}
+            </select>
+            <span class="alert alert-danger" role="alert" id="errorCategoria" style="display: none;">Debe seleccionar una categoría.</span>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>  
+      <script type="text/javascript"> //Validar campos vacios y codigo
+        function validarCodigo() {
+          console.log("Entro a la funcion");
+          let campoCodigo = document.getElementById("codigo")
+          let valorCodigo = campoCodigo.value;
+          let errorCodigo = document.getElementById("errorCodigo")
+          console.log ("El valor del codigo escrito es: " + valorCodigo );
+          var expresionRegular = new RegExp("[A-Z]{3}[0-9]{1,}")
+          if(expresionRegular.test(valorCodigo)) {
+            console.log ("El campo cumple la validacion")
+            errorCodigo.style.display = 'none';
+          } else {
+            console.log ("El campo No cumple la validacion")
+            errorCodigo.style.display = 'block';
+          }
+        }
+      </script>
+      <script> //Validar campos vacios
+            document.addEventListener('DOMContentLoaded', function () {
+              const formulario = document.getElementById('formulario_producto');
+
+            formulario.addEventListener('submit', function (evento) {
+              let valido = true;
+
+            // Descripción
+            const descripcion = document.getElementById('descripcion').value.trim();
+            const errorDescripcion = document.getElementById('errorDescripcionJS');
+            if (descripcion === '') {
+              errorDescripcion.style.display = 'block';
+              valido = false;
+            } else {
+              errorDescripcion.style.display = 'none';
+            }
+
+            // Código
+            const codigo = document.getElementById('codigo').value.trim();
+            const errorCodigo = document.getElementById('errorCodigoVacio');
+            if (codigo === '') {
+              errorCodigo.style.display = 'block';
+              valido = false;
+            } else {
+              errorCodigo.style.display = 'none';
+            }
+
+            // Cantidad Inventario
+            const cantidad = document.getElementById('cantidad_inventario').value.trim();
+            const errorCantidad = document.getElementById('errorCantidad');
+            if (cantidad === '') {
+              errorCantidad.style.display = 'block';
+              valido = false;
+            } else {
+              errorCantidad.style.display = 'none';
+            }
+
+            // Precio Unitario
+            const precio = document.getElementById('precio_unitario').value.trim();
+            const errorPrecio = document.getElementById('errorPrecio');
+            if (precio === '') {
+              errorPrecio.style.display = 'block';
+              valido = false;
+            } else {
+              errorPrecio.style.display = 'none';
+            }
+
+            // Unidad de Medida
+            const unidad = document.getElementById('unidad_medida').value;
+            const errorUnidad = document.getElementById('errorUnidad');
+            if (unidad === 'Por favor seleccione...') {
+              errorUnidad.style.display = 'block';
+              valido = false;
+            } else {
+              errorUnidad.style.display = 'none';
+            }
+
+            // Categoría
+            const categoria = document.getElementById('categoria').value;
+            const errorCategoria = document.getElementById('errorCategoria');
+            if (categoria === 'Por favor seleccione...') {
+              errorCategoria.style.display = 'block';
+              valido = false;
+            } else {
+              errorCategoria.style.display = 'none';
+            }
+
+            if (!valido) {
+              evento.preventDefault();
+            }
+          });
+        });
+      </script>
+      <script> // Ocultar el error de descripcion si el usuario empieza a escribir algo diferente
+        document.addEventListener("DOMContentLoaded", function () {
+          const campoDescripcion = document.getElementById("descripcion");
+          const errorDescripcionServidor = document.getElementById("errorDescripcion");
+          if (campoDescripcion && errorDescripcionServidor) {
+            campoDescripcion.addEventListener("input", function () {
+              errorDescripcionServidor.style.display = "none";
+            });
+          }
+
+          const campoCodigo = document.getElementById("codigo");
+          const erroresCodigo = document.querySelectorAll("#errorCodigo");
+          if (campoCodigo && erroresCodigo.length > 0) {
+            campoCodigo.addEventListener("input", function () {
+              erroresCodigo.forEach(function (errorSpan) {
+                if (errorSpan.style.display === "block") {
+                  errorSpan.style.display = "none";
+                }
+              });
+            });
+          }
+        });
+      </script>
+      <script> //Ocultar mensaje de no dejar campo vacio
+          document.addEventListener("DOMContentLoaded", function () {
+            // DESCRIPCIÓN
+            const campoDescripcion = document.getElementById("descripcion");
+            const errorDescripcionJS = document.getElementById("errorDescripcionJS");
+            if (campoDescripcion && errorDescripcionJS) {
+              campoDescripcion.addEventListener("input", function () {
+                if (campoDescripcion.value.trim() !== "") {
+                  errorDescripcionJS.style.display = "none";
+                }
+              });
+            }
+
+            // CÓDIGO
+            const campoCodigo = document.getElementById("codigo");
+            const errorCodigoVacio = document.getElementById("errorCodigoVacio");
+            if (campoCodigo && errorCodigoVacio) {
+              campoCodigo.addEventListener("input", function () {
+                if (campoCodigo.value.trim() !== "") {
+                  errorCodigoVacio.style.display = "none";
+                }
+              });
+            }
+
+            // CANTIDAD INVENTARIO
+            const campoCantidad = document.getElementById("cantidad_inventario");
+            const errorCantidad = document.getElementById("errorCantidad");
+            if (campoCantidad && errorCantidad) {
+              campoCantidad.addEventListener("input", function () {
+                if (campoCantidad.value.trim() !== "") {
+                  errorCantidad.style.display = "none";
+                }
+              });
+            }
+
+            // PRECIO UNITARIO
+            const campoPrecio = document.getElementById("precio_unitario");
+            const errorPrecio = document.getElementById("errorPrecio");
+            if (campoPrecio && errorPrecio) {
+              campoPrecio.addEventListener("input", function () {
+                if (campoPrecio.value.trim() !== "") {
+                  errorPrecio.style.display = "none";
+                }
+              });
+            }
+
+            // UNIDAD DE MEDIDA 
+            const campoUnidad = document.getElementById("unidad_medida");
+            const errorUnidad = document.getElementById("errorUnidad");
+            if (campoUnidad && errorUnidad) {
+              campoUnidad.addEventListener("change", function () {
+                if (campoUnidad.value !== "Por favor seleccione...") {
+                  errorUnidad.style.display = "none";
+                }
+              });
+            }
+
+            // CATEGORÍA 
+            const campoCategoria = document.getElementById("categoria");
+            const errorCategoria = document.getElementById("errorCategoria");
+            if (campoCategoria && errorCategoria) {
+              campoCategoria.addEventListener("change", function () {
+                if (campoCategoria.value !== "Por favor seleccione...") {
+                  errorCategoria.style.display = "none";
+                }
+              });
+            }
+          });
+      </script>
+{% endblock contenido %}
+
+
+
+
+

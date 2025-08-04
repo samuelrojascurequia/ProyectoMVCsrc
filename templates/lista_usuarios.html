@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% block contenido %}
+      <h1 style="color: darkcyan; font-family: fantasy;">{{titulo}}</h1>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Nombres</th>
+            <th scope="col">Apellidos</th>
+            <th scope="col">Email</th>
+            <th scope="col">Direccion</th>
+            <th scope="col">Telefono</th> 
+            <th scope="col">Documento de identidad</th>
+            <th scope="col">Puesto</th>
+        </tr>
+        </thead>
+        <tbody>
+          {% for usuario in usuarios %}
+          <tr>
+            <th scope="row">{{usuario.nombres}}</th>
+            <td>{{usuario.apellidos}}</td>
+            <td>{{usuario.email}}</td>
+            <td>{{usuario.direccion}}</td>
+            <td>{{usuario.telefono}}</td>
+            <td>{{usuario.documento_identidad}}</td>
+            <td>{{usuario.puesto}}</td>
+            <td>
+              <a href="{{ url_for('editar_usuario', id=usuario.id) }}" class="btn btn-success">Editar</a>
+              <a href="{{ url_for('eliminar_usuario', id=usuario.id) }}" class="btn btn-danger"
+              onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">Borrar</a>
+            </td>
+          </tr>
+          {% endfor %} 
+        </tbody>
+      </table>
+{% endblock contenido %}
