@@ -70,4 +70,4 @@ class ProductosController(FlaskController):
         producto = Productos.traer_producto_por_codigo(codigo)
         if producto:
             Productos.eliminar_producto(producto)
-        return redirect(url_for('lista_productos_html'))
+        return redirect('lista_productos_html')
