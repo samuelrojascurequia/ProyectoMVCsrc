@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect
 from flask_controller import FlaskController 
 from src.models.productos import Productos
 from src.models.categorias import Categorias

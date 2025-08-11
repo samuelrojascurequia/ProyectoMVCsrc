@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect
 from flask_controller import FlaskController 
 from src.models.facturas import Facturas
 from src.app import app
