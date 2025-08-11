@@ -36,11 +36,9 @@ class FacturasController(FlaskController):
                 return render_template('facturas.html',titulo='Error al registrar en la base de datos')    
         return render_template('facturas.html', titulo='Crear Factura')
     
-    @app.route('/factura/editar/<string:codigo>', methods=['GET', 'POST'])
+    @app.route('/editar_factura/<string:codigo>', methods=['GET', 'POST'])
     def editar_factura(codigo):
         factura = Facturas.traer_factura_por_codigo(codigo)
-        if not factura:
-            return redirect('/lista_facturas')
 
         if request.method == 'POST':
             factura.descripcion = request.form.get('descripcion')
@@ -51,14 +49,14 @@ class FacturasController(FlaskController):
             factura.documento_identidad = request.form.get('documento_identidad')
             factura.telefono = request.form.get('telefono')
             try:
-                factura.actualizar_factura()
+                from src.models import session
+                session.commit()
                 return redirect('/lista_facturas')
             except:
                 return render_template('facturas.html', titulo='Error al editar', factura_almacenar=factura)
 
-        return render_template('facturas.html', titulo='Editar Factura', factura_almacenar=factura)
-
-
+        return render_template('facturas.html', titulo='Editar factura', factura_almacenar=factura)
+    
     @app.route('/borrar_factura/<codigo>', methods=['GET'])
     def borrar_factura(codigo):
         factura = Facturas.traer_factura_por_codigo(codigo)

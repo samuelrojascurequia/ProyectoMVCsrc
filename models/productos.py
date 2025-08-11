@@ -36,9 +36,6 @@ class Productos(Base):
     def traer_producto_por_codigo(codigo):
         producto = session.query(Productos).filter(Productos.codigo == codigo).first()
         return producto
-    
-    def actualizar_producto(self):
-        session.commit()
 
     def eliminar_producto(producto):
         session.delete(producto)

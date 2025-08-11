@@ -2,7 +2,7 @@
 
 {% block contenido %}
     <h1 style="color: darkcyan; font-family: fantasy;">{{titulo}}</h1>  
-        <form action="{{ url_for('editar_factura', codigo=factura_almacenar.codigo) if factura_almacenar else url_for('facturas_html') }}"
+        <form action="{{ url_for('editar_factura', codigo=factura_almacenar.codigo) if factura_almacenar and factura_almacenar.id else '' }}"
         method="POST"
         onsubmit="return validarFormulario();"
         id="formulario_facturas"

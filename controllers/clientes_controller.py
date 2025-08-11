@@ -40,10 +40,7 @@ class ClientesController(FlaskController):
     def eliminar_cliente(id):
         cliente = Clientes.traer_cliente_por_id(id)
         if cliente:
-            try:
-                Clientes.eliminar_cliente(cliente)
-            except:
-                return render_template('lista_clientes.html', titulo='Error al eliminar cliente')
+            Clientes.eliminar_cliente(cliente)
         return redirect('/lista_clientes')
 
     @app.route('/editar_cliente/<int:id>', methods=['GET', 'POST'])

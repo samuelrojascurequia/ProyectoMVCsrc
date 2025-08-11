@@ -44,7 +44,7 @@ class ProductosController(FlaskController):
                 return render_template('formulario_producto.html',titulo='Error al registrar en la base de datos',categorias = categorias)    
         return render_template('formulario_producto.html', titulo='Crear Producto',categorias = categorias)
     
-    @app.route('/editar_producto/<codigo>', methods=['GET', 'POST'])
+    @app.route('/editar_producto/<string:codigo>', methods=['GET', 'POST'])
     def editar_producto(codigo):
         producto = Productos.traer_producto_por_codigo(codigo)
         categorias = Categorias.traer_categorias()
@@ -56,13 +56,14 @@ class ProductosController(FlaskController):
             producto.cantidad_inventario = request.form['cantidad_inventario']
             producto.precio_unitario = request.form['precio_unitario']
             producto.categoria = request.form['categoria']
-            producto.actualizar_producto()
-            return redirect(url_for('lista_productos_html'))
+            try:
+                from src.models import session
+                session.commit()
+                return redirect('/lista_productos')
+            except:
+                return render_template('formulario_producto.html', titulo='Error al editar', producto_almacenar=producto)
 
-        return render_template('formulario_producto.html',
-                            titulo='Editar Producto',
-                            producto_almacenar=producto,
-                            categorias=categorias)
+        return render_template('formulario_producto.html', titulo='Editar producto', producto_almacenar=producto, categorias=categorias)
 
     @app.route('/borrar_producto/<codigo>', methods=['GET'])
     def borrar_producto(codigo):
