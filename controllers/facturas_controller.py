@@ -62,4 +62,4 @@ class FacturasController(FlaskController):
         factura = Facturas.traer_factura_por_codigo(codigo)
         if factura:
             Facturas.eliminar_factura(factura)
-        return redirect('lista_facturas')
+        return redirect('/lista_facturas')

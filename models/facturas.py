@@ -36,9 +36,6 @@ class Facturas(Base):
         factura = session.query(Facturas).filter(Facturas.codigo == codigo).first()
         return factura
     
-    def actualizar_factura(self):
-        session.commit()
-    
     def eliminar_factura(factura):
         session.delete(factura)
         session.commit()
