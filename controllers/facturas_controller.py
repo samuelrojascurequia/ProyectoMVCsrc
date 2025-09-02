@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect
 from flask_controller import FlaskController 
 from src.models.facturas import Facturas
+from src.models.productos import Productos
 from src.app import app
 
 class FacturasController(FlaskController):    
@@ -14,8 +15,9 @@ class FacturasController(FlaskController):
     
     @app.route ('/facturas', methods=['GET','POST'])
     def facturas_html():
+        productos = Productos.traer_productos()
         if request.method == 'POST':
-            descripcion = request.form.get('descripcion')
+            producto_id = request.form.get('producto_id')
             codigo = request.form.get('codigo')
             precio_unitario = request.form.get('precio_unitario')
             nombre_vendedor = request.form.get('nombre_vendedor')
@@ -23,43 +25,18 @@ class FacturasController(FlaskController):
             nombre_comprador = request.form.get('nombre_comprador')
             documento_identidad = request.form.get('documento_identidad')
             telefono = request.form.get('telefono')
-            factura_almacenar = Facturas(descripcion,codigo,precio_unitario,nombre_vendedor,metodo_pago,nombre_comprador,documento_identidad,telefono)
+            factura_almacenar = Facturas(producto_id,codigo,precio_unitario,nombre_vendedor,metodo_pago,nombre_comprador,documento_identidad,telefono)
             factura_repetida =  Facturas.traer_factura_por_codigo(codigo)
             if factura_repetida:
                 return render_template('facturas.html'
                                     ,titulo='Crear Factura'
                                     ,errorFactura = 'El codigo no se puede repetir'
-                                    ,factura_almacenar = factura_almacenar)
+                                    ,factura_almacenar = factura_almacenar
+                                    ,productos=productos)
             try:
                 Facturas.crear_factura(factura_almacenar)
             except:            
                 return render_template('facturas.html',titulo='Error al registrar en la base de datos')    
-        return render_template('facturas.html', titulo='Crear Factura')
+        return render_template('facturas.html', titulo='Crear Factura', productos=productos)
     
-    @app.route('/editar_factura/<string:codigo>', methods=['GET', 'POST'])
-    def editar_factura(codigo):
-        factura = Facturas.traer_factura_por_codigo(codigo)
-
-        if request.method == 'POST':
-            factura.descripcion = request.form.get('descripcion')
-            factura.precio_unitario = request.form.get('precio_unitario')
-            factura.nombre_vendedor = request.form.get('nombre_vendedor')
-            factura.metodo_pago = request.form.get('metodo_pago')
-            factura.nombre_comprador = request.form.get('nombre_comprador')
-            factura.documento_identidad = request.form.get('documento_identidad')
-            factura.telefono = request.form.get('telefono')
-            try:
-                from src.models import session
-                session.commit()
-                return redirect('/lista_facturas')
-            except:
-                return render_template('facturas.html', titulo='Error al editar', factura_almacenar=factura)
-
-        return render_template('facturas.html', titulo='Editar factura', factura_almacenar=factura)
     
-    @app.route('/borrar_factura/<codigo>', methods=['GET'])
-    def borrar_factura(codigo):
-        factura = Facturas.traer_factura_por_codigo(codigo)
-        if factura:
-            Facturas.eliminar_factura(factura)
-        return redirect('/lista_facturas')

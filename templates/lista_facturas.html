@@ -18,7 +18,7 @@
         <tbody>
           {% for factura in facturas %}
           <tr>
-            <th scope="row">{{factura.descripcion}}</th>
+            <th scope="row">{{factura.producto.descripcion}}</th>
             <td>{{factura.codigo}}</td>
             <td>{{factura.precio_unitario}}</td>           
             <td>{{factura.nombre_vendedor}}</td>
@@ -26,11 +26,6 @@
             <td>{{factura.nombre_comprador}}</td>
             <td>{{factura.documento_identidad}}</td>
             <td>{{factura.telefono}}</td>
-            <td>
-              <a href="{{ url_for('editar_factura', codigo=factura.codigo) }}" class="btn btn-success">Editar</a>
-              <a href="{{ url_for('borrar_factura', codigo=factura.codigo) }}" class="btn btn-danger"
-              onclick="return confirm('¿Estás seguro de que deseas eliminar esta factura?');">Borrar</a>
-            </td>
           </tr>
           {% endfor %} 
         </tbody>

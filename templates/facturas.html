@@ -2,18 +2,23 @@
 
 {% block contenido %}
     <h1 style="color: darkcyan; font-family: fantasy;">{{titulo}}</h1>  
-        <form action="{{ url_for('editar_factura', codigo=factura_almacenar.codigo) if factura_almacenar and factura_almacenar.id else '' }}"
+        <form action=""
         method="POST"
         onsubmit="return validarFormulario();"
         id="formulario_facturas"
         name="formulario_facturas">
             <div class="form-row">
               <div class="form-group col-md-6">
-                <label for="descripcion">Descripción</label>
-                <input type="text" class="form-control" name="descripcion" {% if factura_almacenar %} value="{{ factura_almacenar.descripcion }}" {% endif %} id="descripcion" placeholder="Describa el producto">
-              <span class="alert alert-danger" role="alert" id="errorDescripcion" style="display: none;">
-                El campo descripción no puede estar vacío.
-              </span>
+                <label for="producto_id">Productos</label>
+                <select name="producto_id" id="producto_id" class="form-control" required>
+                  <option value="">Por favor seleccione...</option>
+                  {% for producto in productos %}
+                    <option value="{{ producto.id }}"
+                      {% if factura_almacenar and factura_almacenar.producto_id == producto.id %}selected{% endif %}>
+                      {{ producto.descripcion }}
+                    </option>
+                  {% endfor %}
+                </select>
               </div>
               <div class="form-group col-md-6">
                 <label for="codigo">Codigo</label>
@@ -103,16 +108,6 @@
 
             formulario.addEventListener('submit', function (evento) {
               let valido = true;
-
-            // Descripción
-            const descripcion = document.getElementById('descripcion').value.trim();
-            const errorDescripcion = document.getElementById('errorDescripcion');
-            if (descripcion === '') {
-              errorDescripcion.style.display = 'block';
-              valido = false;
-            } else {
-              errorDescripcion.style.display = 'none';
-            }
 
             // Código
             const codigo = document.getElementById('codigo').value.trim();

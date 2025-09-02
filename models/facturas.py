@@ -1,10 +1,13 @@
-from sqlalchemy import Column, Integer, String, Numeric
+from sqlalchemy import Column, Integer, String, Numeric, ForeignKey
+from sqlalchemy.orm import relationship
 from src.models import session, Base
+from src.models.productos import Productos
 
 class Facturas(Base):
     __tablename__ = 'facturas'
     id = Column(Integer, primary_key=True)
-    descripcion = Column(String(300), nullable=False)
+    producto_id = Column(Integer,ForeignKey('productos.id'), nullable=False)
+    producto = relationship("Productos", backref="facturas")
     codigo = Column(String(300), unique=True, nullable=False)
     precio_unitario = Column(String(300), nullable=False)
     nombre_vendedor = Column(String(300), nullable=False)
@@ -13,8 +16,8 @@ class Facturas(Base):
     documento_identidad = Column(String(20), nullable=False)
     telefono = Column(String(20), nullable=False)
 
-    def __init__(self, descripcion, codigo, precio_unitario, nombre_vendedor, metodo_pago, nombre_comprador, documento_identidad, telefono):
-        self.descripcion = descripcion
+    def __init__(self, producto_id, codigo, precio_unitario, nombre_vendedor, metodo_pago, nombre_comprador, documento_identidad, telefono):
+        self.producto_id = producto_id
         self.codigo = codigo
         self.precio_unitario = precio_unitario
         self.nombre_vendedor = nombre_vendedor
